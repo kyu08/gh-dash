@@ -237,7 +237,6 @@ func (pr *PullRequest) renderRepoName() string {
 func (pr *PullRequest) renderUpdateAt() string {
 	timeFormat := pr.Ctx.Config.Defaults.DateFormat
 
-	updatedAtOutput := ""
 	t := pr.Branch.LastUpdatedAt
 	if pr.Data != nil {
 		t = &pr.Data.UpdatedAt
@@ -247,13 +246,15 @@ func (pr *PullRequest) renderUpdateAt() string {
 		return ""
 	}
 
+	style := pr.Ctx.Theme.PrimaryText
+	updatedAtOutput := t.Format(timeFormat)
+
 	if timeFormat == "" || timeFormat == "relative" {
+		style = pr.Ctx.Theme.FaintText
 		updatedAtOutput = utils.TimeElapsed(*t)
-	} else {
-		updatedAtOutput = t.Format(timeFormat)
 	}
 
-	return pr.getTextStyle().Foreground(pr.Ctx.Theme.FaintText).Render(updatedAtOutput)
+	return pr.getTextStyle().Foreground(style).Render(updatedAtOutput)
 }
 
 func (pr *PullRequest) renderBaseName() string {
